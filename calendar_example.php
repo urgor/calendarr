@@ -2,7 +2,7 @@
 
 include_once 'calendarr.inc';
 
-\Calendarr\Reg::setConfig('calendar.ini');
+\Calendarr\Reg::setConfig('calendar_example.ini');
 
 // \Calendarr\Reg::fetchCache('../tmp', 'calendar_'.date('m-d').'_'); // use disk cache
 
