@@ -1,0 +1,19 @@
+{
+    "name": "urgor/calendarr",
+    "description": "Create stadium like shape calendar png image. Or circle. Stroke past days, highlight current day or custom days. Style customizable amlost everything.",
+    "type": "library",
+    "homepage": "https://github.com/urgor/calendarr",
+    "authors": [
+        {
+            "name": "Alexandr Olejnik",
+            "email": "urgoka@gmail.com"
+        }
+    ],
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://github.com/urgor/calendarr"
+        }
+    ],
+    "require": {}
+}
