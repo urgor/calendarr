@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Urgor\Calendarr\Calendarr;
+namespace Calendarr;
 
 class Config implements \ArrayAccess
 {

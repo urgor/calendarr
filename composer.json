@@ -6,7 +6,7 @@
     "homepage": "https://github.com/urgor/calendarr",
     "autoload": {
         "psr-4": {
-            "Urgor\\Calendarr\\": "src/"
+            "Calendarr\\": "src/"
         }
     },
     "authors": [
