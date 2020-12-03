@@ -2,6 +2,7 @@
     "name": "urgor/calendarr",
     "description": "Create stadium like shape calendar png image. Or circle. Stroke past days, highlight current day or custom days. Style customizable amlost everything.",
     "type": "library",
+    "license": "MIT",
     "homepage": "https://github.com/urgor/calendarr",
     "authors": [
         {
