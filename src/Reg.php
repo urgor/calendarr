@@ -36,7 +36,7 @@ class Reg
 
     public function drawCalendar()
     {
-        Reg::$img = imagecreatetruecolor(Reg::$cfg['layout']['xSize'], Reg::$cfg['layout']['ySize']);
+        Reg::$img = imagecreatetruecolor((int)Reg::$cfg['layout']['xSize'], (int)Reg::$cfg['layout']['ySize']);
         if (!is_resource(Reg::$img)) {
             throw new Exception('Can not create image ressource', 1);
         }
