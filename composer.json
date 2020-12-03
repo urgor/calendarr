@@ -4,17 +4,27 @@
     "type": "library",
     "license": "MIT",
     "homepage": "https://github.com/urgor/calendarr",
+    "autoload": {
+        "psr-4": {
+            "Urgor\\Calendarr\\": "src/"
+        }
+    },
     "authors": [
         {
             "name": "Alexandr Olejnik",
             "email": "urgoka@gmail.com"
         }
     ],
+    "config": {
+        "optimize-autoloader": true
+    },
     "repositories": [
         {
             "type": "composer",
             "url": "https://github.com/urgor/calendarr"
         }
     ],
-    "require": {}
+    "require": {
+        "php": ">=7.0"
+    }
 }
