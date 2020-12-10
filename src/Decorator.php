@@ -1,6 +1,6 @@
 <?php
 
-namespace Calendarr;
+namespace Urgor\Calendarr;
 
 class Decorator
 {

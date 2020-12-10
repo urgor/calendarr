@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Calendarr;
+namespace Urgor\Calendarr;
 
 class PixelY extends Pixel
 {
