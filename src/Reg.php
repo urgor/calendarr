@@ -4,50 +4,40 @@ namespace Urgor\Calendarr;
 
 class Reg
 {
+    /** @var Config */
+    public static $cfg;
+    /** @var \GdImage GD image object handler */
+    public static $img;
+    /** @var Pixel */
+    public static $x;
+    /** @var Pixel */
+    public static $y;
 
-    public static $cfg, $img, $x, $y;
-
-    public static function setConfig($configFile)
+    /**
+     * @param string $configFile
+     * @return void
+     * @throws \Exception
+     */
+    public static function setConfig(string $configFile)
     {
         self::$cfg = Config::create($configFile);
     }
 
-    public static function setY($y)
+    /**
+     * @param Pixel $y
+     * @return void
+     */
+    public static function setY(Pixel $y)
     {
         self::$y = $y;
     }
 
-    public static function setX($x)
+    /**
+     * @param Pixel $x
+     * @return void
+     */
+    public static function setX(Pixel $x)
     {
         self::$x = $x;
-    }
-
-    public function fetchCache($dir, $prefix)
-    {
-        $key = self::$cfg->getKey();
-        if (file_exists($dir . '/' . $prefix . $key . '.png')) {
-            header("Content-Type: image/png");
-            readfile($dir . '/' . $prefix . $key . '.png');
-        } else {
-            self::drawCalendar();
-            imagepng(self::$img, $dir . '/' . $prefix . $key . '.png', 5);
-        }
-    }
-
-    public function drawCalendar()
-    {
-        Reg::$img = imagecreatetruecolor((int)Reg::$cfg['layout']['xSize'], (int)Reg::$cfg['layout']['ySize']);
-        if (!is_resource(Reg::$img)) {
-            throw new Exception('Can not create image ressource', 1);
-        }
-
-        Reg::setX(Pixel::create(Pixel::X, Reg::$cfg['layout']['xSize'] / 2));
-        Reg::setY(Pixel::create(Pixel::Y, Reg::$cfg['layout']['ySize'] / 2));
-
-        Decorator::init();
-        (new Calendar)->draw();
-        Decorator::afterDraw();
-        header("Content-Type: image/png");
-        imagepng(Reg::$img, null, 5);
     }
 }

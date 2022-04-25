@@ -4,46 +4,34 @@ namespace Urgor\Calendarr;
 
 abstract class Pixel
 {
-
-    const X = 'x';
-    const Y = 'y';
-
-    protected $_current_value, $_begin_value;
+    /** @var float */
+    protected $_current_value;
+    /** @var float */
+    protected $_begin_value;
 
     /**
-     * Class factory
-     * Фабрика класса. Вернёт экземпляр X или Y
-     * @param str $type Pixel::X | Pixel::Y   Класс возвращаемого объекта
-     * @param float $value Начальная координата
-     * @abstract
-     * @
-     * @return \PixelX
+     * @param float $value
      */
-    public static function create($type, $value)
-    {
-        return self::X === $type ? new PixelX($value) : new PixelY($value);
-    }
-
-    public function __construct($value)
+    public function __construct(float $value)
     {
         $this->_current_value = $value;
         $this->_begin_value = $value;
     }
 
     /**
-     * Переместит текущую координату в начальную
+     * Move current coord to begin
      * @return float
      */
-    public function resetToBegin()
+    public function resetToBegin(): float
     {
         return $this->_current_value = $this->_begin_value;
     }
 
     /**
-     * для простого получения текущего значения координаты
+     * Get current coordinate
      * @return float
      */
-    public function __invoke()
+    public function __invoke(): float
     {
         return $this->_current_value;
     }
@@ -52,7 +40,7 @@ abstract class Pixel
      * Ставит текущую координату  каа начальную
      * @return float
      */
-    public function setCurrentAsBegin()
+    public function setCurrentAsBegin(): float
     {
         return $this->_begin_value = $this->_current_value;
     }
@@ -62,7 +50,7 @@ abstract class Pixel
      * @param float $value
      * @return float
      */
-    public function set($value)
+    public function set(float $value): float
     {
         return $this->_begin_value = $this->_current_value = $value;
     }
@@ -71,7 +59,7 @@ abstract class Pixel
      * Вернёт текущее значение координаты
      * @return float
      */
-    public function get()
+    public function get(): float
     {
         return $this->_current_value;
     }

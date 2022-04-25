@@ -11,30 +11,30 @@ class PixelY extends Pixel
     }
 
     /**
-     * Расч`т смещения координаты без запоминания
-     * @param int $value Смещение
+     * Calculate coordinate shift without remembering
+     * @param float $value Shift
      */
-    public function add($value)
+    public function add(float $value): float
     {
         return $this->_current_value - $value;
     }
 
     /**
-     * Сдвинет относительно текущей точки
+     * Shift relative current point
      * @param float $value
      * @return float
      */
-    public function depose($value)
+    public function depose(float $value): float
     {
         return $this->_current_value = $this->_current_value - $value;
     }
 
     /**
-     * Сдвинет относительно начальной точки
+     * Shift relative begin point
      * @param float $value
      * @return float
      */
-    public function deposeOfBegin($value)
+    public function deposeOfBegin(float $value): float
     {
         return $this->_current_value = $this->_begin_value - $value;
     }

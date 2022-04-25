@@ -4,12 +4,18 @@ namespace Urgor\Calendarr;
 
 class Decorator
 {
-
-    private static $config;
-    private static $image;
+    /**
+     * @var array Color runtime cache for imagecolorallocatealpha
+     */
     private static $colorMap = [];
+    /**
+     * @var \DateTime current date and time
+     */
     private static $dateNow;
-    private static $currentDayBox = false;
+    /**
+     * @var array current day box coords
+     */
+    private static $currentDayBox = [];
 
     public static function init()
     {
@@ -17,7 +23,7 @@ class Decorator
         imagefill(Reg::$img, 0, 0, self::getColor(Reg::$cfg['layout']['background']));
 
         self::$dateNow = new \DateTime();
-        self::$dateNow->modify('today'); // там надо для сравнения
+        self::$dateNow->modify('today'); // need for comparing
         // year
         if (Reg::$cfg['style']['year']) {
             Decorator::year(Reg::$cfg['layout']['year']);
@@ -89,7 +95,7 @@ class Decorator
      */
     public static function afterDraw()
     {
-        if (self::$currentDayBox && isset(Reg::$cfg['current_day_frame_gstyle'])) {
+        if (!empty(self::$currentDayBox) && isset(Reg::$cfg['current_day_frame_gstyle'])) {
             imagesetthickness(Reg::$img, Reg::$cfg['current_day_frame_gstyle']['thick']);
             $color = Decorator::getColor(Reg::$cfg['current_day_frame_gstyle']['color']);
             imageline(Reg::$img, self::$currentDayBox[0], self::$currentDayBox[1], self::$currentDayBox[2],
@@ -104,11 +110,11 @@ class Decorator
     }
 
     /**
-     * Надписи месяцев с центрированием
+     * Moth names aligned
      *
-     * @param string $text Название месяца
-     * @param float $angle Угол наклона
-     * @param array $B "Правая" точка (точка назначения)
+     * @param string $text Month name
+     * @param float $angle Angle
+     * @param array $B "Right" point (destination point)
      */
     public static function months($text, $angle, $B)
     {
@@ -135,7 +141,7 @@ class Decorator
     public static function __callstatic($name, $args)
     {
         if (!array_key_exists($name, Reg::$cfg['style'])) {
-            throw new Exception('Style ' . $name . 'is not defined', 1);
+            throw new \Exception('Style ' . $name . 'is not defined', 1);
         }
         $style = Reg::$cfg['style'][$name];
         $text = reset($args);
@@ -156,13 +162,13 @@ class Decorator
 
     /**
      * Get width and height of font size
-     * @param str $style Style name
+     * @param string $style Style name
      * @return array [width, height]
      */
     public static function getFontDims($style)
     {
         if (!array_key_exists($style, Reg::$cfg['style'])) {
-            throw new Exception('Style ' . $style . 'is not defined', 1);
+            throw new \Exception('Style ' . $style . 'is not defined', 1);
         }
 
         $box = imagettfbbox(Reg::$cfg['style'][$style]['size'], 0, Reg::$cfg['style'][$style]['font'],

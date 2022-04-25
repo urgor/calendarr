@@ -2,22 +2,20 @@
 
 namespace Urgor\Calendarr;
 
+use Urgor\Calendarr\ConfigIni;
+
 class Config implements \ArrayAccess
 {
 
     protected $data;
 
-    protected function __construct()
-    {
-    }
-
-    public static function create($configFile)
+    public static function create($configFile): Config
     {
         $info = pathinfo($configFile);
         if (!in_array(strtolower($info['extension']), ['ini'])) {
-            throw new Exception("Unknow config type");
+            throw new \Exception("Unknow config type");
         }
-        $class = '\Calendarr\Config' . ucfirst(strtolower($info['extension']));
+        $class = 'Urgor\Calendarr\Config' . ucfirst(strtolower($info['extension']));
         $conf = new $class($configFile);
         $conf->prepare();
         $conf->prepareStyle();
@@ -26,9 +24,9 @@ class Config implements \ArrayAccess
 
     /**
      * Create key for caching
-     * @return str String of md5
+     * @return string String of md5
      */
-    public function getKey()
+    public function getKey(): string
     {
         return md5(json_encode($this->data));
     }
@@ -96,11 +94,11 @@ class Config implements \ArrayAccess
 
     public function offsetSet($offset, $value)
     {
-        throw new Exception("Read only mode");
+        throw new \Exception("Read only mode");
     }
 
     public function offsetUnset($offset)
     {
-        throw new Exception("Read only mode");
+        throw new \Exception("Read only mode");
     }
 }
