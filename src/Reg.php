@@ -2,9 +2,11 @@
 
 namespace Urgor\Calendarr;
 
+use Urgor\Calendarr\Config\AbstractCfg;
+
 class Reg
 {
-    /** @var Config */
+    /** @var AbstractCfg */
     public static $cfg;
     /** @var \GdImage GD image object handler */
     public static $img;
@@ -14,13 +16,13 @@ class Reg
     public static $y;
 
     /**
-     * @param string $configFile
+     * @param AbstractCfg $config
      * @return void
      * @throws \Exception
      */
-    public static function setConfig(string $configFile)
+    public static function setConfig(AbstractCfg $config)
     {
-        self::$cfg = Config::create($configFile);
+        self::$cfg = $config;
     }
 
     /**

@@ -2,20 +2,36 @@
 
 namespace Urgor\Calendarr;
 
+use Urgor\Calendarr\ImageTtf\Decorator;
+
 class Drawer
 {
-
     private $monthPoints = [];
+
+    /**
+     * @var \DateTime current date and time
+     */
+    private $dateNow;
+
+    public function init()
+    {
+        imagesavealpha(Reg::$img, true);
+        imagefill(Reg::$img, 0, 0, Decorator::getColor(Reg::$cfg['layout']['background']));
+
+        $this->dateNow = new \DateTime();
+        $this->dateNow->modify('today'); // need for comparing
+
+        $box = Reg::$cfg->getStyle('year')->getFontDims(null, null, Reg::$cfg['layout']['year']);
+        Reg::$cfg->getStyle('year')->imagettftext(Reg::$cfg['layout']['year'], null, null, Reg::$x->add(-$box[0] / 2), Reg::$y->add($box[1]));
+
+        return $this;
+    }
 
     public function draw()
     {
-        $this->i = 0;
-
         $this->date = new \DateTime(Reg::$cfg['layout']['year'] . '-01-01');
-
         $daysInYear = '0' === $this->date->format('L') ? 364 : 365;
-
-        list($this->fontWidth, $this->fontHeight) = Decorator::getFontDims('DOW');
+        list($this->fontWidth, $this->fontHeight) = Reg::$cfg->getStyle('DOW')->getFontDims();
         Reg::$x->deposeOfBegin(-$this->fontWidth / 2);
         Reg::$x->setCurrentAsBegin();
         Reg::$y->deposeOfBegin(-$this->fontHeight / 2);
@@ -42,16 +58,15 @@ class Drawer
             $ddate->modify('+1 day');
         }
         unset($ddate);
-        if (Reg::$cfg['style']['DOW']) {
-            if ('ellipse' == Reg::$cfg['layout']['shape']) {
-                $weekShiftForDowSpring = (24 - $this->degenerateInSpring) * 7;
-                $weekShiftForDowFall = (24 - $this->degenerateInFall) * 7;
-            } elseif ('circle' == Reg::$cfg['layout']['shape']) {
-                $weekShiftForDow = (24 - ($this->degenerateInSpring + $this->degenerateInFall) - 1) * 7;
-                $weekShiftForDowSpring = 0;
-                $weekShiftForDowFall = 0;
-            }
+        if ('ellipse' == Reg::$cfg['layout']['shape']) {
+            $weekShiftForDowSpring = (24 - $this->degenerateInSpring) * 7;
+            $weekShiftForDowFall = (24 - $this->degenerateInFall) * 7;
+        } elseif ('circle' == Reg::$cfg['layout']['shape']) {
+            $weekShiftForDow = (24 - ($this->degenerateInSpring + $this->degenerateInFall) - 1) * 7;
+            $weekShiftForDowSpring = 0;
+            $weekShiftForDowFall = 0;
         }
+
         $this->alphaOfDay = 2 * pi() / ($daysInYear + 7 + $weekShiftForDow); // +7 чтоб начало года не пересекалось с концом года
 
         $this->alphaOfDaySpring = 2 * pi() / ($daysInYear + 7 + $weekShiftForDowSpring) * 2;
@@ -64,38 +79,28 @@ class Drawer
 
             Reg::$x->deposeOfBegin($r * cos($this->alpha));
             Reg::$y->deposeOfBegin($r * sin($this->alpha));
-            Decorator::day($this->date);
+            $this->day($this->date);
 
             $this->dayOfWeek++;
             $this->date->modify('+1 day');
 
-            if (Reg::$cfg['style']['DOW']) {
-                if (1 == $this->date->format('N')) { // начало новой недели
-                    $this->dayOfWeek = 0; // смещение дня недели на строке
-                    $this->_makeWeekJob();
+            if (1 == $this->date->format('N')) { // начало новой недели
+                $this->dayOfWeek = 0; // смещение дня недели на строке
+                $this->makeWeekJob();
+            }
+            if (1 == $this->date->format('j')) { // первое число
+                if (1 != $this->date->format('N')) {
+                    $this->makeWeekJob();
                 }
-                if (1 == $this->date->format('j')) { // первое число
-                    if (1 != $this->date->format('N')) {
-                        $this->_makeWeekJob();
-                    }
-                    $this->_drawDOW();
-                    $this->_makeWeekJob();
-                }
-            } else {
-                if (1 == $this->date->format('N')) { // начало новой недели
-                    $this->dayOfWeek = 0; // смещение дня недели на строке
-                    $this->_makeWeekJob();
-                }
-                if (1 == $this->date->format('j')) { // первое число
-                    $this->_makeWeekJob();
-                }
+                $this->drawDOWNames();
+                $this->makeWeekJob();
             }
         }
 
         $this->monthsCalculate();
     }
 
-    private function _makeWeekJob()
+    private function makeWeekJob()
     {
         if ('circle' == Reg::$cfg['layout']['shape']) {
             $this->alpha -= $this->alphaOfDay * 7; // сдвигаем угол сразу на неделю
@@ -124,7 +129,7 @@ class Drawer
     /**
      * Отрисовка дней недели между каждым месяцем
      */
-    private function _drawDOW()
+    private function drawDOWNames()
     {
         for ($dow = 0; $dow < 7; $dow++) {
             if (0 == $dow) {
@@ -137,13 +142,8 @@ class Drawer
             $dowR = $dow * ($this->fontWidth + Reg::$cfg['layout']['kerning']) + Reg::$cfg['layout']['radius'];
             Reg::$x->deposeOfBegin($dowR * cos($this->alpha));
             Reg::$y->deposeOfBegin($dowR * sin($this->alpha));
-            Decorator::DOW(Reg::$cfg['lang']['DOW'][$dow]);
+            Reg::$cfg->getStyle('DOW')->imagettftext(Reg::$cfg['lang']['DOW'][$dow]);
         }
-    }
-
-    private function _mark()
-    {
-        imageellipse(Reg::$img, Reg::$x->get(), Reg::$y->get(), 5, 5, Decorator::DOW());
     }
 
     private function monthsCalculate()
@@ -157,7 +157,7 @@ class Drawer
         $angle = acos($a / $c) * 180 / pi();
         Reg::$x->set($B['x']);
         Reg::$y->set($B['y']);
-        Decorator::months(Reg::$cfg['lang']['months'][0], $angle, $A);
+        self::months(Reg::$cfg['lang']['months'][0], $angle, $A);
         // feb
         $B = $this->monthPoints[0];
         $A = $this->monthPoints[1];
@@ -167,7 +167,7 @@ class Drawer
         $angle = acos($a / $c) * 180 / pi();
         Reg::$x->set($B['x']);
         Reg::$y->set($B['y']);
-        Decorator::months(Reg::$cfg['lang']['months'][1], $angle, $A);
+        self::months(Reg::$cfg['lang']['months'][1], $angle, $A);
         // mar
         $B = $this->monthPoints[1];
         $A = $this->monthPoints[2];
@@ -177,7 +177,7 @@ class Drawer
         $angle = acos($a / $c) * 180 / pi();
         Reg::$x->set($B['x']);
         Reg::$y->set($B['y']);
-        Decorator::months(Reg::$cfg['lang']['months'][2], $angle, $A);
+        self::months(Reg::$cfg['lang']['months'][2], $angle, $A);
         // apr
         $B = $this->monthPoints[2];
         $A = $this->monthPoints[3];
@@ -187,7 +187,7 @@ class Drawer
         $angle = -acos($a / $c) * 180 / pi();
         Reg::$x->set($B['x']);
         Reg::$y->set($B['y']);
-        Decorator::months(Reg::$cfg['lang']['months'][3], $angle, $A);
+        self::months(Reg::$cfg['lang']['months'][3], $angle, $A);
         // may
         $B = $this->monthPoints[3];
         $A = $this->monthPoints[4];
@@ -197,7 +197,7 @@ class Drawer
         $angle = -acos($a / $c) * 180 / pi();
         Reg::$x->set($B['x']);
         Reg::$y->set($B['y']);
-        Decorator::months(Reg::$cfg['lang']['months'][4], $angle, $A);
+        self::months(Reg::$cfg['lang']['months'][4], $angle, $A);
         // jun
         $B = $this->monthPoints[4];
         $A = $this->monthPoints[5];
@@ -207,7 +207,7 @@ class Drawer
         $angle = 90 + acos($a / $c) * 180 / pi();
         Reg::$x->set($A['x']);
         Reg::$y->set($A['y']);
-        Decorator::months(Reg::$cfg['lang']['months'][5], $angle, $B);
+        self::months(Reg::$cfg['lang']['months'][5], $angle, $B);
         // jul
         $B = $this->monthPoints[5];
         $A = $this->monthPoints[6];
@@ -217,7 +217,7 @@ class Drawer
         $angle = acos($a / $c) * 180 / pi();
         Reg::$x->set($A['x']);
         Reg::$y->set($A['y']);
-        Decorator::months(Reg::$cfg['lang']['months'][6], $angle, $B);
+        self::months(Reg::$cfg['lang']['months'][6], $angle, $B);
         // aug
         $B = $this->monthPoints[6];
         $A = $this->monthPoints[7];
@@ -227,7 +227,7 @@ class Drawer
         $angle = acos($a / $c) * 180 / pi();
         Reg::$x->set($A['x']);
         Reg::$y->set($A['y']);
-        Decorator::months(Reg::$cfg['lang']['months'][7], $angle, $B);
+        self::months(Reg::$cfg['lang']['months'][7], $angle, $B);
         // sep
         $B = $this->monthPoints[7];
         $A = $this->monthPoints[8];
@@ -237,7 +237,7 @@ class Drawer
         $angle = acos($a / $c) * 180 / pi();
         Reg::$x->set($A['x']);
         Reg::$y->set($A['y']);
-        Decorator::months(Reg::$cfg['lang']['months'][8], $angle, $B);
+        self::months(Reg::$cfg['lang']['months'][8], $angle, $B);
         // oct
         $B = $this->monthPoints[8];
         $A = $this->monthPoints[9];
@@ -247,7 +247,7 @@ class Drawer
         $angle = -acos($a / $c) * 180 / pi();
         Reg::$x->set($A['x']);
         Reg::$y->set($A['y']);
-        Decorator::months(Reg::$cfg['lang']['months'][9], $angle, $B);
+        self::months(Reg::$cfg['lang']['months'][9], $angle, $B);
         // nov
         $B = $this->monthPoints[9];
         $A = $this->monthPoints[10];
@@ -257,7 +257,7 @@ class Drawer
         $angle = -acos($a / $c) * 180 / pi();
         Reg::$x->set($A['x']);
         Reg::$y->set($A['y']);
-        Decorator::months(Reg::$cfg['lang']['months'][10], $angle, $B);
+        self::months(Reg::$cfg['lang']['months'][10], $angle, $B);
         // dec
         $B = $this->monthPoints[10];
         $A = $this->monthPoints[11];
@@ -267,6 +267,60 @@ class Drawer
         $angle = 90 + acos($a / $c) * 180 / pi();
         Reg::$x->set($B['x']);
         Reg::$y->set($B['y']);
-        Decorator::months(Reg::$cfg['lang']['months'][11], $angle, $A);
+        self::months(Reg::$cfg['lang']['months'][11], $angle, $A);
+    }
+
+    /**
+     * Define style and print the day.
+     * @param \DateTime $day
+     * @return void
+     * @throws \Exception
+     */
+    private function day(\DateTime $day)
+    {
+        if ('01' == $day->format('d')) {
+            $style = Reg::$cfg->getStyle('default')->extendedBy('kalends');
+        } elseif (in_array($day->format('N'), ['6', '7'])) {
+            $style = Reg::$cfg->getStyle('default')->extendedBy('weekend');
+        } else {
+            $style = Reg::$cfg->getStyle('default');
+        }
+
+        foreach (['d.m.Y', 'd.m'] as $format) {
+            $dayStr = $day->format($format);
+            if (array_key_exists($dayStr, Reg::$cfg['days_mark_as'])) {
+                $style = $style->extendedBy(Reg::$cfg['days_mark_as'][$dayStr]);
+            }
+        }
+
+        if ($day->getTimestamp() < $this->dateNow->getTimestamp()) {
+            $style = $style->extendedBy('past');
+        } elseif ($day->format('Y-m-d') === date('Y-m-d')) {
+            $style = $style->extendedBy('current_day');
+        }
+
+        $style->imagettftext($day->format('d'), null, null, Reg::$x->get(), Reg::$y->get());
+    }
+
+    /**
+     * Moth names aligned
+     *
+     * @param string $text Month name
+     * @param float $angle Angle
+     * @param array $B "Right" point (destination point)
+     */
+    private static function months($text, $angle, $B)
+    {
+        $A = ['x' => Reg::$x->get(), 'y' => Reg::$y->get()];
+        $a = abs(abs($A['y']) - abs($B['y']));
+        $b = abs(abs($A['x']) - abs($B['x']));
+        $c = sqrt(pow($a, 2) + pow($b, 2));
+
+        $box = Reg::$cfg->getStyle('month')->getFontDims(null, null, $text);
+        $ct = ($c - $box[1]) / 2;
+        $a = $ct * sin($angle * pi() / 180);
+        $b = $ct * cos($angle * pi() / 180);
+
+        Reg::$cfg->getStyle('month')->imagettftext($text, null, $angle, Reg::$x->deposeOfBegin($b), Reg::$y->deposeOfBegin($a));
     }
 }

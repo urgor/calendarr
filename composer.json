@@ -1,6 +1,6 @@
 {
     "name": "urgor/calendarr",
-    "description": "Create stadium like shape calendar png image. Or circle. Stroke past days, highlight current day or custom days. Style customizable amlost everything.",
+    "description": "Create stadium like shape calendar png image. Or circle. Cross out past days, highlight current day and/or custom days. Style customizable amlost everything.",
     "type": "library",
     "license": "MIT",
     "homepage": "https://github.com/urgor/calendarr",
@@ -25,8 +25,9 @@
         }
     ],
     "require": {
-        "php": ">=7.0",
+        "php": ">=7.1",
         "ext-gd": "*",
-        "ext-json": "*"
+        "ext-json": "*",
+        "ext-mbstring": "*"
     }
 }

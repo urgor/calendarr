@@ -5,17 +5,17 @@ namespace Urgor\Calendarr;
 abstract class Pixel
 {
     /** @var float */
-    protected $_current_value;
+    protected $currentValue;
     /** @var float */
-    protected $_begin_value;
+    protected $beginValue;
 
     /**
      * @param float $value
      */
     public function __construct(float $value)
     {
-        $this->_current_value = $value;
-        $this->_begin_value = $value;
+        $this->currentValue = $value;
+        $this->beginValue = $value;
     }
 
     /**
@@ -24,7 +24,7 @@ abstract class Pixel
      */
     public function resetToBegin(): float
     {
-        return $this->_current_value = $this->_begin_value;
+        return $this->currentValue = $this->beginValue;
     }
 
     /**
@@ -33,7 +33,7 @@ abstract class Pixel
      */
     public function __invoke(): float
     {
-        return $this->_current_value;
+        return $this->currentValue;
     }
 
     /**
@@ -42,7 +42,7 @@ abstract class Pixel
      */
     public function setCurrentAsBegin(): float
     {
-        return $this->_begin_value = $this->_current_value;
+        return $this->beginValue = $this->currentValue;
     }
 
     /**
@@ -52,7 +52,7 @@ abstract class Pixel
      */
     public function set(float $value): float
     {
-        return $this->_begin_value = $this->_current_value = $value;
+        return $this->beginValue = $this->currentValue = $value;
     }
 
     /**
@@ -61,7 +61,6 @@ abstract class Pixel
      */
     public function get(): float
     {
-        return $this->_current_value;
+        return $this->currentValue;
     }
-
 }

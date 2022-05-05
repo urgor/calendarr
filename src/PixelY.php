@@ -16,7 +16,7 @@ class PixelY extends Pixel
      */
     public function add(float $value): float
     {
-        return $this->_current_value - $value;
+        return $this->currentValue - $value;
     }
 
     /**
@@ -26,7 +26,7 @@ class PixelY extends Pixel
      */
     public function depose(float $value): float
     {
-        return $this->_current_value = $this->_current_value - $value;
+        return $this->currentValue = $this->currentValue - $value;
     }
 
     /**
@@ -36,7 +36,7 @@ class PixelY extends Pixel
      */
     public function deposeOfBegin(float $value): float
     {
-        return $this->_current_value = $this->_begin_value - $value;
+        return $this->currentValue = $this->beginValue - $value;
     }
 
 }
