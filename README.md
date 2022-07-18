@@ -7,12 +7,9 @@ Create stadium like shape calendar png image. Or circle. Cross out past days, hi
 ## Code Example
 Simplest bootstrap (calendar_example.php) file:
 ```
-use \Urgor\Calendarr\Reg;
-use \Urgor\Calendarr\Config\AbstractCfg;
-
 include '../vendor/autoload.php';
 
-Reg::setConfig(AbstractCfg::create('calendar_example.ini'));
+\Urgor\Calendarr\Reg::setConfig(\Urgor\Calendarr\Config\Cfg::create('calendar_example.ini'));
 $calendarr = new Urgor\Calendarr\Calendar();
 $calendarr->drawAndOutput(); // no cache
 // or use string below for cached one

@@ -18,16 +18,18 @@
     "config": {
         "optimize-autoloader": true
     },
-    "repositories": [
-        {
-            "type": "composer",
-            "url": "https://github.com/urgor/calendarr"
-        }
-    ],
     "require": {
         "php": ">=7.1",
         "ext-gd": "*",
         "ext-json": "*",
         "ext-mbstring": "*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.5"
+    },
+    "scripts": {
+        "test": [
+            "vendor/bin/phpunit"
+        ]
     }
 }

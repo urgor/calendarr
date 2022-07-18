@@ -2,7 +2,7 @@
 
 namespace Urgor\Calendarr\Config;
 
-class Ini extends AbstractCfg
+class Ini extends Cfg
 {
     public function __construct($configFile)
     {

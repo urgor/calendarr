@@ -37,9 +37,9 @@ class Drawer
         Reg::$y->deposeOfBegin(-$this->fontHeight / 2);
         Reg::$y->setCurrentAsBegin();
 
-        //////////////////////////////////////////////////////  //////////////////////////////////////////////////////////
-        // каждый день рисуется отступая от центра окружности. Вычисляем его и устанавливаем.
-        // Будемнумеровать дни 0=пн, 1=вт ... 5=сб, 6=вс  для удобства отступа от радиуса
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // Every day draws by offset from circle`s center. Calculate it and set.
+        // Day numeration from 0=mo, ... 6=su for convenience of shifting from radius
         $this->dayOfWeek = (int)$this->date->format('N') - 1;
 
         $weekShiftForDow = 0;
@@ -67,7 +67,7 @@ class Drawer
             $weekShiftForDowFall = 0;
         }
 
-        $this->alphaOfDay = 2 * pi() / ($daysInYear + 7 + $weekShiftForDow); // +7 чтоб начало года не пересекалось с концом года
+        $this->alphaOfDay = 2 * pi() / ($daysInYear + 7 + $weekShiftForDow); // +7 to prevent year begin overlapping with the end
 
         $this->alphaOfDaySpring = 2 * pi() / ($daysInYear + 7 + $weekShiftForDowSpring) * 2;
         $this->alphaOfDayFall = 2 * pi() / ($daysInYear + 7 + $weekShiftForDowFall) * 2;
@@ -84,11 +84,11 @@ class Drawer
             $this->dayOfWeek++;
             $this->date->modify('+1 day');
 
-            if (1 == $this->date->format('N')) { // начало новой недели
-                $this->dayOfWeek = 0; // смещение дня недели на строке
+            if (1 == $this->date->format('N')) { // begin of new week
+                $this->dayOfWeek = 0; // day shift on the line
                 $this->makeWeekJob();
             }
-            if (1 == $this->date->format('j')) { // первое число
+            if (1 == $this->date->format('j')) { // first day of the month
                 if (1 != $this->date->format('N')) {
                     $this->makeWeekJob();
                 }
@@ -103,19 +103,18 @@ class Drawer
     private function makeWeekJob()
     {
         if ('circle' == Reg::$cfg['layout']['shape']) {
-            $this->alpha -= $this->alphaOfDay * 7; // сдвигаем угол сразу на неделю
+            $this->alpha -= $this->alphaOfDay * 7; // shift angle for one week
         } elseif ('ellipse' == Reg::$cfg['layout']['shape']) {
-            if (!$this->firstWeekOfSide && in_array($this->date->format('n'),
-                    array(1, 2, 12))) { // зима; инккрементим Y
+            if (!$this->firstWeekOfSide && in_array($this->date->format('n'), [1, 2, 12])) { // winter; increment Y
                 Reg::$y->deposeOfBegin($this->fontHeight + Reg::$cfg['layout']['spacing']);
                 Reg::$y->setCurrentAsBegin();
-                $this->alpha = pi(); // сдвигаем угол сразу на неделю
-            } elseif (!$this->firstWeekOfSide && in_array($this->date->format('n'),
-                    array(6, 7, 8))) { // лето; декрементим Y
-                Reg::$y->deposeOfBegin(-($this->fontHeight + Reg::$cfg['layout']['spacing'] + (($this->fontHeight + Reg::$cfg['layout']['spacing']) / 13))); // ($this->fontHeight+Reg::$cfg['layout']['spacing'])/13) -- для компенсации одной недели, Чтоб новый год не накладывался
+                $this->alpha = pi(); // shift angle for one week
+            } elseif (!$this->firstWeekOfSide && in_array($this->date->format('n'), [6, 7, 8])) { // summer; decrement Y
+                // compensate one week height to prevent new year overlapping
+                Reg::$y->deposeOfBegin(-($this->fontHeight + Reg::$cfg['layout']['spacing'] + (($this->fontHeight + Reg::$cfg['layout']['spacing']) / 13)));
                 Reg::$y->setCurrentAsBegin();
-                $this->alpha = 0; // сдвигаем угол сразу на неделю
-            } else { // осень, весна ; изменяем угол
+                $this->alpha = 0; // shift angle for one week
+            } else { // fall and spring ; change angle
                 $this->alpha -= $this->alphaOfDay * 1.33 * 7; // сдвигаем угол сразу на неделю
                 if (in_array($this->date->format('n'), array(1, 2, 12, 6, 7, 8))) {
                     $this->firstWeekOfSide = false;
@@ -127,7 +126,7 @@ class Drawer
     }
 
     /**
-     * Отрисовка дней недели между каждым месяцем
+     * Draw day of weeks between each month
      */
     private function drawDOWNames()
     {
