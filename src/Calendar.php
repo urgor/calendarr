@@ -30,10 +30,11 @@ class Calendar
      */
     public function drawAndOutput()
     {
-        Reg::$img = imagecreatetruecolor((int)Reg::$cfg['layout']['xSize'], (int)Reg::$cfg['layout']['ySize']);
-        if (!is_resource(Reg::$img)) {
+        $img = imagecreatetruecolor((int)Reg::$cfg['layout']['xSize'], (int)Reg::$cfg['layout']['ySize']);
+        if (false === $img) {
             throw new \Exception('Can not create image resource');
         }
+        Reg::$img = $img;
 
         Reg::$cfg->init();
         Reg::setX(new PixelX(Reg::$cfg['layout']['xSize'] / 2));
