@@ -7,7 +7,7 @@ use Urgor\Calendarr\Reg;
 /**
  * Necessary decorator methods.
  */
-abstract class Decorator
+abstract class Decorator implements TextDecorable
 {
     /**
      * @var TextDecorable
@@ -31,10 +31,9 @@ abstract class Decorator
      */
     public function extendedBy(string $styleName): TextDecorable
     {
-        if (!Reg::$cfg['extended_style_' . $styleName]) {
-            throw new \Exception('No style ' . $styleName);
-        }
-        return self::createStyle(Reg::$cfg['extended_style_' . $styleName], $this);
+        return Reg::$cfg['extended_style_' . $styleName]
+            ? self::createStyle(Reg::$cfg['extended_style_' . $styleName], $this)
+            : $this;
     }
 
     /**
