@@ -23,7 +23,7 @@ class Frame extends Decorator implements TextDecorable
     {
         parent::__construct($text, $properties);
         $this->color = self::getColor($properties['frame_color'] ?? '000000');
-        $this->thick = (int)$properties['frame_thick'] ?? 1;
+        $this->thick = (int)($properties['frame_thick'] ?? 1);
     }
 
     /** @inheritDoc */

@@ -20,7 +20,7 @@ class Background extends Decorator implements TextDecorable
     {
         parent::__construct($text, $properties);
         $this->color = self::getColor($properties['background_color'] ?? '000000');
-        $this->growth = $properties['background_growth'] ?? 0;
+        $this->growth = (int)($properties['background_growth'] ?? 0);
     }
 
     /** @inheritDoc */

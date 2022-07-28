@@ -1,6 +1,10 @@
 <?php
+use Urgor\Calendarr\Reg;
+use Urgor\Calendarr\Config\Cfg;
+
 include '../vendor/autoload.php';
 
-\Urgor\Calendarr\Reg::setConfig(\Urgor\Calendarr\Config\Cfg::create('calendar_example.ini'));
-$calendar = new Urgor\Calendarr\Calendar();
-$calendar->drawAndOutput(); // no cache
+Reg::setConfig(Cfg::create('./calendarr_config_summer.ini'));
+$calendarr = new Urgor\Calendarr\Calendar();
+$calendarr->drawAndOutput(); // no cache
+// $calendarr->fetchCache('../tmp', 'calendar_'.date('m-d').'_'); // use disk cache

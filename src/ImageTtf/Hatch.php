@@ -32,7 +32,7 @@ class Hatch extends Decorator implements TextDecorable
     {
         parent::__construct($text, $properties);
         $this->color = self::getColor($properties['hatch_color'] ?? '000000');
-        $this->thick = (int)$properties['hatch_thick'] ?? 1;
+        $this->thick = (int)($properties['hatch_thick'] ?? 1);
         $this->type = $properties['hatch_type'] ?? self::TYPE_STRICT;
     }
 

@@ -7,14 +7,14 @@ Create stadium like shape calendar png image. Or circle. Cross out past days, hi
 ## Code Example
 Simplest bootstrap (calendar_example.php) file:
 ```
+use Urgor\Calendarr\Reg;
+use Urgor\Calendarr\Config\Cfg;
+
 include '../vendor/autoload.php';
 
-\Urgor\Calendarr\Reg::setConfig(\Urgor\Calendarr\Config\Cfg::create('calendar_example.ini'));
+Reg::setConfig(Cfg::create('./calendarr_config_summer.ini'));
 $calendarr = new Urgor\Calendarr\Calendar();
-$calendarr->drawAndOutput(); // no cache
-// or use string below for cached one
-// $calendarr->fetchCache('../tmp', 'calendar_'.date('m-d').'_'); // use disk cache
-
+$calendarr->drawAndOutput();
 ```
 Or look into Reg and create your own custom bootstrap interface.
 
@@ -43,6 +43,7 @@ Possible style keywords with their values are:
 * background_color = ff0000
 * background_growth = 2 ; enlarge background frame on this px amount
 
+Also, you can find web configurator at [my site](https://urgor.com.ua/calendarr-configurator/).
 
 ## Contributors
 
